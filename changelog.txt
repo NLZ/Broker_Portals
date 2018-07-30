@@ -1,3 +1,17 @@
+1.10.0:
+  - update: updated for 8.0
+  - update: added Greatfather Winter's Hearthstone and Headless Horseman's Hearthstone
+  - update: updated libs
+
+1.9.3+:
+  - feature: moved Flight Master's Whistle to separete category
+  - update: added Violet Seal of the Grand Magus
+  - update: added Pugilist's Powerful Punching Ring
+  - update: added Astonishingly Scarlet Slippers
+  - update: moved Tome of Town Portal to hearthstones
+  - update: reorganized hearthstones: consumables > gears > toys > Hearthstone
+  - update: added Wormhole Generator: Argus
+
 1.9.2:
   - update: updated for 7.2
   - update: added Scroll of Teleport: Ravenholdt and Tome of Town Portal

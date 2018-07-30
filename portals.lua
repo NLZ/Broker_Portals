@@ -58,6 +58,7 @@ local items = {
     48933,  -- Wormhole Generator: Northrend
     87215,  -- Wormhole Generator: Pandaria
     112059, -- Wormhole Centrifuge
+    151652, -- Wormhole Generator: Argus
     -- Seasonal items
     37863,  -- Direbrew's Remote
     21711,  -- Lunar Festival Invitation
@@ -109,20 +110,27 @@ local items = {
     136849, -- Nature's Beacon
     139590, -- Scroll of Teleport: Ravenholdt
     140192, -- Dalaran Hearthstone
-    141605, -- Flight Master's Whistle
     140324, -- Mobile Telemancy Beacon
-    142542  -- Tome of Town Portal
+    142469, -- Violet Seal of the Grand Magus
+    144391, -- Pugilist's Powerful Punching Ring (Alliance)
+    144392  -- Pugilist's Powerful Punching Ring (Horde)
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
-    64488, -- The Innkeeper's Daughter
-    28585, -- Ruby Slippers
-    6948,  -- Hearthstone
-    44315, -- Scroll of Recall III
-    44314, -- Scroll of Recall II
-    37118  -- Scroll of Recall
+    44315,  -- Scroll of Recall III
+    44314,  -- Scroll of Recall II
+    37118,  -- Scroll of Recall
+    142298, -- Astonishingly Scarlet Slippers
+    28585,  -- Ruby Slippers
+    162973, -- Greatfather Winter's Hearthstone
+    163045, -- Headless Horseman's Hearthstone
+    142542, -- Tome of Town Portal
+    64488,  -- The Innkeeper's Daughter
+    6948    -- Hearthstone
 }
+
+local whistle = 141605 -- Flight Master's Whistle
 
 -- Gold Challenge portals
 local challengeSpells = {
@@ -415,6 +423,23 @@ local function GetScrollCooldown()
     return L['N/A']
 end
 
+local function GetWhistleCooldown()
+    local cooldown, startTime, duration
+
+    if GetItemCount(whistle) > 0 then
+        startTime, duration = GetItemCooldown(whistle)
+        cooldown = duration - (GetTime() - startTime)
+        if cooldown <= 0 then
+            return L['READY']
+        else
+            return SecondsToTime(cooldown)
+        end
+
+    end
+
+    return L['N/A']
+end
+
 local function GetItemCooldowns()
     local cooldown, cooldowns, hours, mins, secs
 
@@ -471,28 +496,54 @@ local function ShowHearthstone()
     end
 end
 
+local function ShowWhistle()
+    local secure, icon, name
+
+    if hasItem(whistle) then
+        name, _, _, _, _, _, _, _, _, icon = GetItemInfo(whistle)
+        secure = {
+            type = 'item',
+            item = name
+        }
+    end
+
+    if secure ~= nil then
+        dewdrop:AddLine()
+        dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
+            'text', name,
+            'secure', secure,
+            'icon', tostring(icon),
+            'func', function() UpdateIcon(icon) end,
+            'closeWhenClicked', true)
+        dewdrop:AddLine()
+    end
+end
+
 local function ShowOtherItems()
+    local secure, icon, quality, name
     local i = 0
 
     for i = 1, #items do
         if hasItem(items[i]) then
-            local name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(items[i])
-            local secure = {
+            name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(items[i])
+            secure = {
                 type = 'item',
                 item = name
             }
 
-            dewdrop:AddLine(
-                'textHeight', PortalsDB.fontSize,
-                'text', name,
-                'textR', ITEM_QUALITY_COLORS[quality].r,
-                'textG', ITEM_QUALITY_COLORS[quality].g,
-                'textB', ITEM_QUALITY_COLORS[quality].b,
-                'secure', secure,
-                'icon', tostring(icon),
-                'func', function() UpdateIcon(icon) end,
-                'closeWhenClicked', true)
-            i = i + 1
+            if secure ~= nil then
+                dewdrop:AddLine(
+                    'textHeight', PortalsDB.fontSize,
+                    'text', name,
+                    'textR', ITEM_QUALITY_COLORS[quality].r,
+                    'textG', ITEM_QUALITY_COLORS[quality].g,
+                    'textB', ITEM_QUALITY_COLORS[quality].b,
+                    'secure', secure,
+                    'icon', tostring(icon),
+                    'func', function() UpdateIcon(icon) end,
+                    'closeWhenClicked', true)
+            end
         end
     end
     if i > 0 then
@@ -549,6 +600,7 @@ local function UpdateMenu(level, value)
 
         if PortalsDB.showItems then
             ShowOtherItems()
+            ShowWhistle()
         end
 
         dewdrop:AddLine(
@@ -695,6 +747,13 @@ function obj.OnEnter(self)
                 end
             end
         end
+    end
+
+    local whistleCooldown = GetWhistleCooldown()
+    if whistleCooldown == L['READY'] then
+        GameTooltip:AddDoubleLine(GetItemInfo(whistle), whistleCooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+    else
+       GameTooltip:AddDoubleLine(GetItemInfo(whistle), whistleCooldown, 0.9, 0.6, 0.2, 1, 1, 0.2)
     end
 
     GameTooltip:Show()
