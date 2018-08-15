@@ -1,3 +1,6 @@
+1.10.1:
+  - update: added BfA mage portals (thanks @tiker!)
+
 1.10.0:
   - update: updated for 8.0
   - update: added Greatfather Winter's Hearthstone and Headless Horseman's Hearthstone
