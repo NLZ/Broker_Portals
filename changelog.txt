@@ -1,3 +1,7 @@
+1.10.2:
+  - update: updated CallbackHandler-1.0 and LibDBIcon-1.0
+  - update: reorganized libs
+
 1.10.1:
   - update: added BfA mage portals (thanks @tiker!)
 
